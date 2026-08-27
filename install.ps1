@@ -1,4 +1,4 @@
-#windows-to-chromeos
+ #windows-to-chromeos
 #chromeos windows customization
 #program version  1.0.0
 
@@ -47,4 +47,68 @@ if (!(Test-Path $ExplorerAdvanced)) {
    New-item -path $ExplorerAdvanced -force | Out-null
 )
 
-#
+# Center taskbar icons on supported Windows versions
+Set-ItemProperty
+  -Path $ExplorerAdvanced
+  -Name "TaskbarAl"
+  -Type Dword
+  -Value 0
+
+# Disable taskbar search box where supported
+Set-ItemProperty
+  -Path $ExplorerAdvanced
+  -Name "TaskbarDa"
+  -Type Dword
+  -Value 0
+
+  Write-Host "Taskbar configured."
+  Write-Host ""
+
+  # Enable dark/light Windows app preference
+  Write-Host " [3/5] Configuring appearance..."
+
+  $Personalize = "HKCU:
+  \Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+
+  if (!(Test-Path $Personalize)) {
+     New-Item -Path $Personalize -Force | Out-Null
+     }
+
+# Light appearance
+Set-ItemProperty
+  -Path $Personalize
+  -Name "AppsUseLightTheme"
+  -Type DWord
+  -Value 1
+
+  Set-ItemProperty
+  -Path $Personalize
+  -Name "SystemUsesLightTheme"
+  -Type DWord
+  -Value 1
+
+Write-Host "Appearance Configured."
+Write-Host ""
+
+#Restart Explorer
+Write-Host "[4/5] Restarting Windows Explorer..."
+
+Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+Start-Process explorer.exe
+
+Write-Host "Explorer restarted."
+Write-Host ""
+
+#Finished
+Write-Host "[5/5] Installation complete!"
+Write-Host ""
+Write-Host "Windows-to-Chromeos Version 1.0.0 has been installed."
+Write-Host ""
+Write-Host "Backup location:"
+Write-Host "$BackupPath
+Write-Host ""
+Write-Host "======================================================================"
+Write-Host "          Windows-to-chromeos"
+Write-Host "======================================================================"
+
+Read-Host "Press Enter to Exit"
